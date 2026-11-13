@@ -1,8 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import "./App.css";
 import AdminDashboard from "./pages/AdminDashboard.tsx";
-import LoginPage from "./pages/LoginPage.tsx";
-import SignUpPage from "./pages/SignUpPage.tsx";
+import AuthPage from "./pages/AuthPage.tsx";
 
 function App() {
   const currentUser = false; // todo: set up authentication
@@ -14,11 +13,11 @@ function App() {
           path="/"
           // once authentication is set up we can have this display AdminDashboard or VolunteerDashboard depending on permissions
           element={
-            currentUser ? <AdminDashboard /> : <Navigate to="login" replace />
+            currentUser ? <AdminDashboard /> : <Navigate to="signin" replace />
           }
         />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/signin" element={<AuthPage mode="signin" />} />
+        <Route path="/signup" element={<AuthPage mode="signup"/>} />
       </Routes>
     </BrowserRouter>
   );
