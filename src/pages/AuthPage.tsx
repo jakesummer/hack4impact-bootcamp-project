@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import LabeledInput from "../components/LabeledInput.tsx";
 
 interface AuthPageProps {
@@ -9,6 +10,11 @@ export default function AuthPage({ mode }: AuthPageProps) {
 
   return (
     <>
+      <div>
+        <Link to={"/signin"}>Sign In</Link>
+        <Link to={"/signup"}>Create</Link>
+      </div>
+
       <form>
         {!isSignin && (
           <LabeledInput labelText="Name" inputName="name" required={true} />
