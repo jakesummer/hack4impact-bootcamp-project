@@ -1,17 +1,25 @@
-import { useId, type HTMLInputTypeAttribute } from "react";
+import {
+  useId,
+  type ChangeEventHandler,
+  type HTMLInputTypeAttribute,
+} from "react";
 
 interface LabeledInputProps {
   labelText: string;
   inputType?: HTMLInputTypeAttribute;
   inputName: string;
-  required: boolean
+  required: boolean;
+  value: string;
+  onChange: ChangeEventHandler<HTMLInputElement>;
 }
 
 export default function LabeledInput({
   labelText,
   inputType = "text",
   inputName,
-  required
+  required,
+  value,
+  onChange,
 }: LabeledInputProps) {
   const id = useId();
 
@@ -23,6 +31,8 @@ export default function LabeledInput({
         id={id}
         name={inputName}
         required={required}
+        value={value}
+        onChange={onChange}
         className="border-black border-solid border-2"
       />
     </label>

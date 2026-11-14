@@ -5,9 +5,10 @@ import AuthPage from "./pages/AuthPage.tsx";
 import DonationsPage from "./pages/DonationsPage.tsx";
 import WishlistPage from "./pages/WishlistPage.tsx";
 import DonationsManagementPage from "./pages/DonationsManagementPage.tsx";
+import useAuth from "./hooks/useAuth.tsx";
 
 function App() {
-  const currentUser = false; // todo: set up authentication
+  const { currentUser } = useAuth();
 
   return (
     <BrowserRouter>
@@ -25,7 +26,10 @@ function App() {
             currentUser ? <DonationsPage /> : <Navigate to="signin" replace />
           }
         >
-          <Route path="/donations/manage" element={<DonationsManagementPage />} />
+          <Route
+            path="/donations/manage"
+            element={<DonationsManagementPage />}
+          />
         </Route>
         <Route
           path="/wishlist"

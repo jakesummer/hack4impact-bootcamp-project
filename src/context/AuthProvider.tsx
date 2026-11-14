@@ -18,7 +18,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     });
 
     return unsubscribe;
-  });
+  }, []);
 
   const value = { currentUser, loading };
 
