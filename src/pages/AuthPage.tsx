@@ -1,3 +1,5 @@
+import LabeledInput from "../components/LabeledInput.tsx";
+
 interface AuthPageProps {
   mode: "signin" | "signup";
 }
@@ -5,5 +7,25 @@ interface AuthPageProps {
 export default function AuthPage({ mode }: AuthPageProps) {
   const isSignin = mode === "signin";
 
-  return isSignin ? <p>sign in</p> : <p>sign up</p>
+  return (
+    <>
+      <form>
+        {!isSignin && (
+          <LabeledInput labelText="Name" inputName="name" required={true} />
+        )}
+        <LabeledInput
+          labelText="Email"
+          inputType="email"
+          inputName="email"
+          required={true}
+        />
+        <LabeledInput
+          labelText="Password"
+          inputType="password"
+          inputName="password"
+          required={true}
+        />
+      </form>
+    </>
+  );
 }
