@@ -8,6 +8,28 @@ import { useState } from "react";
 import { auth, db } from "../firebase/firebase.ts";
 import type { UserData } from "../types.ts";
 import { doc, setDoc } from "firebase/firestore";
+import { FirebaseError } from "firebase/app";
+
+function getErrorMessage(error: string) {
+  switch (error) {
+    case "auth/invalid-email":
+      return "Please enter a valid email address.";
+    case "auth/invalid-password":
+      return "Please enter a valid password.";
+    case "auth/user-disabled":
+      return "This account has been disabled.";
+    case "auth/invalid-credential":
+      return "Incorrect email or password.";
+    case "auth/too-many-requests":
+      return "Too many failed attempts. Please try again later.";
+    case "auth/email-already-exists":
+      return "This email is already in use.";
+    case "auth/weak-password":
+      return "Password must be at least 6 characters";
+    default:
+      return "Something went wrong. Please try again.";
+  }
+}
 
 interface AuthPageProps {
   mode: "signin" | "signup";
@@ -17,12 +39,16 @@ export default function AuthPage({ mode }: AuthPageProps) {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const navigate = useNavigate();
 
   const isSignin = mode === "signin";
 
   const handleAuth = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    const form = e.currentTarget.form;
+    if (form && !form.reportValidity()) return;
+
     try {
       if (isSignin) {
         await signInWithEmailAndPassword(auth, email, password);
@@ -37,7 +63,10 @@ export default function AuthPage({ mode }: AuthPageProps) {
       }
       navigate("/");
     } catch (e) {
-      alert(e);
+      if (e instanceof FirebaseError) {
+        setErrorMessage(getErrorMessage(e.code));
+        console.log(e.code);
+      }
     }
   };
 
@@ -74,6 +103,7 @@ export default function AuthPage({ mode }: AuthPageProps) {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        {errorMessage && <p>{errorMessage}</p>}
 
         <button onClick={(e) => handleAuth(e)}>
           {isSignin ? "Sign In" : "Create Account"}

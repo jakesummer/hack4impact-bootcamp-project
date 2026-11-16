@@ -22,8 +22,14 @@ function App() {
             <ProtectedRoute isAllowed={currentUser === null} redirect="/" />
           }
         >
-          <Route path="/signin" element={<AuthPage mode="signin" />} />
-          <Route path="signup" element={<AuthPage mode="signup" />} />
+          <Route
+            path="/signin"
+            element={<AuthPage key="signin" mode="signin" />}
+          />
+          <Route
+            path="signup"
+            element={<AuthPage key="signup" mode="signup" />}
+          />
         </Route>
 
         <Route element={<ProtectedRoute isAllowed={currentUser !== null} />}>
