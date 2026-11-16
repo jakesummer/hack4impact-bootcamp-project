@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import { BrowserRouter, Route, Routes } from "react-router";
 import "./App.css";
 import WorkerDashboard from "./pages/WorkerDashboard.tsx";
 import AuthPage from "./pages/AuthPage.tsx";
@@ -6,57 +6,50 @@ import DonationsPage from "./pages/DonationsPage.tsx";
 import WishlistPage from "./pages/WishlistPage.tsx";
 import DonationsManagementPage from "./pages/DonationsManagementPage.tsx";
 import useAuth from "./hooks/useAuth.tsx";
+import ParticipantDashboard from "./pages/ParticipantDashboard.tsx";
+import UnauthorizedPage from "./pages/UnauthorizedPage.tsx";
+import ProtectedRoute from "./components/ProtectedRoute.tsx";
 
 function App() {
-  const { currentUser } = useAuth();
+  const { currentUser, userData } = useAuth();
+  const isParticipant = userData?.accountType === "participant";
 
   return (
     <BrowserRouter>
       <Routes>
         <Route
-          path="/"
-          // once authentication is set up we can have this display WorkerDashboard or ParticipantDashboard depending on permissions
           element={
-            currentUser ? <WorkerDashboard /> : <Navigate to="signin" replace />
-          }
-        />
-        <Route
-          path="/donations"
-          element={
-            currentUser ? <DonationsPage /> : <Navigate to="signin" replace />
+            <ProtectedRoute isAllowed={currentUser === null} redirect="/" />
           }
         >
-          <Route
-            path="/donations/manage"
-            element={<DonationsManagementPage />}
-          />
+          <Route path="/signin" element={<AuthPage mode="signin" />} />
+          <Route path="signup" element={<AuthPage mode="signup" />} />
         </Route>
-        <Route
-          path="/wishlist"
-          element={
-            currentUser ? <WishlistPage /> : <Navigate to="signin" replace />
-          }
-        />
-        <Route
-          path="/signin"
-          element={
-            currentUser ? (
-              <Navigate to="/" replace />
-            ) : (
-              <AuthPage mode="signin" />
-            )
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            currentUser ? (
-              <Navigate to="/" replace />
-            ) : (
-              <AuthPage mode="signup" />
-            )
-          }
-        />
+
+        <Route element={<ProtectedRoute isAllowed={currentUser !== null} />}>
+          <Route
+            path="/"
+            element={
+              isParticipant ? <ParticipantDashboard /> : <WorkerDashboard />
+            }
+          />
+          <Route
+            path="/donations"
+            element={isParticipant ? <UnauthorizedPage /> : <DonationsPage />}
+          >
+            <Route
+              path="/donations/manage"
+              element={
+                isParticipant ? (
+                  <UnauthorizedPage />
+                ) : (
+                  <DonationsManagementPage />
+                )
+              }
+            />
+          </Route>
+          <Route path="/wishlist" element={<WishlistPage />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
