@@ -1,10 +1,5 @@
-import type { User } from "firebase/auth";
 import { createContext } from "react";
-
-interface AuthContextType {
-  currentUser: User | null;
-  loading: boolean;
-}
+import type { AuthContextType } from "../types.ts";
 
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined,

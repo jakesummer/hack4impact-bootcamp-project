@@ -5,7 +5,9 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { useState } from "react";
-import { auth } from "../firebase/firebase.ts";
+import { auth, db } from "../firebase/firebase.ts";
+import type { UserData } from "../types.ts";
+import { doc, setDoc } from "firebase/firestore";
 
 interface AuthPageProps {
   mode: "signin" | "signup";
@@ -25,7 +27,13 @@ export default function AuthPage({ mode }: AuthPageProps) {
       if (isSignin) {
         await signInWithEmailAndPassword(auth, email, password);
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userCred = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password,
+        );
+        const defaultData: UserData = { name, accountType: "participant" }; // TODO: change account type based on login
+        await setDoc(doc(db, "users", userCred.user.uid), defaultData);
       }
       navigate("/");
     } catch (e) {
