@@ -37,8 +37,26 @@ function App() {
             currentUser ? <WishlistPage /> : <Navigate to="signin" replace />
           }
         />
-        <Route path="/signin" element={<AuthPage mode="signin" />} />
-        <Route path="/signup" element={<AuthPage mode="signup" />} />
+        <Route
+          path="/signin"
+          element={
+            currentUser ? (
+              <Navigate to="/" replace />
+            ) : (
+              <AuthPage mode="signin" />
+            )
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            currentUser ? (
+              <Navigate to="/" replace />
+            ) : (
+              <AuthPage mode="signup" />
+            )
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
