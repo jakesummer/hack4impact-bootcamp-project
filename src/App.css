@@ -1,1 +1,31 @@
+@import url("https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap");
 @import "tailwindcss";
+
+@theme {
+  --color-green-dark: #2c3930;
+  --color-green-medium: #3f4e45;
+  --color-green-light: #586e61;
+
+  --color-brown-dark: #816048;
+  --color-brown-medium: #a27a5d;
+  --color-brown-light: #c3997b;
+
+  --color-cream-dark: #c6bfac;
+  --color-cream-medium: #ddd7c8;
+  --color-cream-light: #fcf9f0;
+
+  --color-red-medium: #c09890;
+  --color-red-light: #f5e5e2;
+
+  --color-blue-medium: #808abd;
+  --color-blue-light: #e2e5f5;
+
+  --color-grayscale-0: #1e1c1b;
+  --color-grayscale-1: #3e3a36;
+  --color-grayscale-2: #5f5a55;
+  --color-grayscale-3: #88847e;
+  --color-grayscale-4: #b3aea6;
+  --color-grayscale-5: #e6e4e1;
+
+  --font-lora: "Lora", var(--font-serif);
+}
