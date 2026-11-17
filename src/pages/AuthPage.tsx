@@ -109,6 +109,8 @@ export default function AuthPage({ mode }: AuthPageProps) {
           {isSignin ? "Sign In" : "Create Account"}
         </button>
       </form>
+
+      <Link to="/forgot-password">Forgot Password?</Link>
     </>
   );
 }

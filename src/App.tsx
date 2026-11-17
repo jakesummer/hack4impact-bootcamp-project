@@ -9,6 +9,7 @@ import useAuth from "./hooks/useAuth.tsx";
 import ParticipantDashboard from "./pages/ParticipantDashboard.tsx";
 import UnauthorizedPage from "./pages/UnauthorizedPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage.tsx";
 
 function App() {
   const { currentUser, userData } = useAuth();
@@ -30,6 +31,7 @@ function App() {
             path="signup"
             element={<AuthPage key="signup" mode="signup" />}
           />
+          <Route path="forgot-password" element={<ForgotPasswordPage />} />
         </Route>
 
         <Route element={<ProtectedRoute isAllowed={currentUser !== null} />}>
