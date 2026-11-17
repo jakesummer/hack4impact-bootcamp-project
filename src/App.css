@@ -25,7 +25,8 @@
   --color-grayscale-2: #5f5a55;
   --color-grayscale-3: #88847e;
   --color-grayscale-4: #b3aea6;
-  --color-grayscale-5: #e6e4e1;
+  --color-grayscale-5: #d9d9d9;
+  --color-grayscale-6: #e6e4e1;
 
   --font-lora: "Lora", var(--font-serif);
 }

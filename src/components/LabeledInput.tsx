@@ -24,7 +24,7 @@ export default function LabeledInput({
   const id = useId();
 
   return (
-    <label className="flex flex-col" htmlFor={id}>
+    <label className="flex flex-col gap-1.5 w-full" htmlFor={id}>
       {labelText}
       <input
         type={inputType}
@@ -33,7 +33,7 @@ export default function LabeledInput({
         required={required}
         value={value}
         onChange={onChange}
-        className="border-black border-solid border-2"
+        className="bg-white border border-black rounded-md h-10 px-3"
       />
     </label>
   );

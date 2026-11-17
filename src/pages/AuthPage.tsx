@@ -10,6 +10,17 @@ import type { UserData } from "../types.ts";
 import { doc, setDoc } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
 
+interface AuthPageProps {
+  mode: "signin" | "signup";
+}
+
+interface SwitchModeButtonProps {
+  to: string;
+  text: string;
+  side: "left" | "right";
+  selected: boolean;
+}
+
 function getErrorMessage(error: string) {
   switch (error) {
     case "auth/invalid-email":
@@ -31,8 +42,19 @@ function getErrorMessage(error: string) {
   }
 }
 
-interface AuthPageProps {
-  mode: "signin" | "signup";
+function SwitchModeButton({ to, text, side, selected }: SwitchModeButtonProps) {
+  const rounded = side === "left" ? "rounded-l-lg" : "rounded-r-lg";
+  const bgColor = selected ? "bg-green-light/50" : "bg-white";
+  const hoverColor = !selected ? "hover:bg-grayscale-6" : "";
+  const cursor = selected ? "cursor-default" : "cursor-pointer";
+  return (
+    <Link
+      to={to}
+      className={`w-[50%] flex justify-center text-xl py-3 border border-black ${rounded} ${bgColor} ${hoverColor} ${cursor}`}
+    >
+      {text}
+    </Link>
+  );
 }
 
 export default function AuthPage({ mode }: AuthPageProps) {
@@ -45,6 +67,7 @@ export default function AuthPage({ mode }: AuthPageProps) {
   const isSignin = mode === "signin";
 
   const handleAuth = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    setErrorMessage("");
     e.preventDefault();
     const form = e.currentTarget.form;
     if (form && !form.reportValidity()) return;
@@ -71,46 +94,70 @@ export default function AuthPage({ mode }: AuthPageProps) {
   };
 
   return (
-    <>
-      <div>
-        <Link to={"/signin"}>Sign In</Link>
-        <Link to={"/signup"}>Create</Link>
+    <div className="m-auto bg-cream-light rounded-3xl p-15 flex flex-col items-center gap-7 text-black">
+      <div className="w-25 h-25 bg-grayscale-5 rounded-full"></div>
+
+      <h1 className="text-4xl uppercase my-5">Winter Wishlist Association</h1>
+
+      <div className="w-full flex justify-center lowercase">
+        <SwitchModeButton
+          to="/signin"
+          text="Sign In"
+          side="left"
+          selected={isSignin}
+        />
+        <SwitchModeButton
+          to="/signup"
+          text="Create Account"
+          side="right"
+          selected={!isSignin}
+        />
       </div>
 
-      <form>
-        {!isSignin && (
+      <form className="w-full flex flex-col" id="auth-form">
+        <div className="flex flex-col gap-5">
+          {!isSignin && (
+            <LabeledInput
+              labelText="Full Name"
+              inputName="name"
+              required={true}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          )}
           <LabeledInput
-            labelText="Name"
-            inputName="name"
+            labelText="Email"
+            inputType="email"
+            inputName="email"
             required={true}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
-        )}
-        <LabeledInput
-          labelText="Email"
-          inputType="email"
-          inputName="email"
-          required={true}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <LabeledInput
-          labelText="Password"
-          inputType="password"
-          inputName="password"
-          required={true}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {errorMessage && <p>{errorMessage}</p>}
+          <LabeledInput
+            labelText="Password"
+            inputType="password"
+            inputName="password"
+            required={true}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <Link to="/forgot-password" className="self-end text-grayscale-1 mt-1">
+          Forgot Password?
+        </Link>
 
-        <button onClick={(e) => handleAuth(e)}>
-          {isSignin ? "Sign In" : "Create Account"}
-        </button>
+        {errorMessage && (
+          <p className="self-center text-red-400">{errorMessage}</p>
+        )}
       </form>
 
-      <Link to="/forgot-password">Forgot Password?</Link>
-    </>
+      <button
+        onClick={(e) => handleAuth(e)}
+        form="auth-form"
+        className="bg-green-medium w-full text-2xl text-cream-light py-3 rounded-xl cursor-pointer hover:bg-green-dark"
+      >
+        {isSignin ? "Sign In" : "Create Account"}
+      </button>
+    </div>
   );
 }
