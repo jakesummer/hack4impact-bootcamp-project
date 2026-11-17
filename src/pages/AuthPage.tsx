@@ -22,7 +22,7 @@ function getErrorMessage(error: string) {
       return "Incorrect email or password.";
     case "auth/too-many-requests":
       return "Too many failed attempts. Please try again later.";
-    case "auth/email-already-exists":
+    case "auth/email-already-in-use":
       return "This email is already in use.";
     case "auth/weak-password":
       return "Password must be at least 6 characters";
