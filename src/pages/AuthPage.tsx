@@ -9,6 +9,8 @@ import { auth, db } from "../firebase/firebase.ts";
 import type { UserData } from "../types.ts";
 import { doc, setDoc } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
+import AuthContainer from "../components/AuthContainer.tsx";
+import PrimaryButton from "../components/PrimaryButton.tsx";
 
 interface AuthPageProps {
   mode: "signin" | "signup";
@@ -94,7 +96,7 @@ export default function AuthPage({ mode }: AuthPageProps) {
   };
 
   return (
-    <div className="m-auto bg-cream-light rounded-3xl p-15 flex flex-col items-center gap-7 text-black">
+    <AuthContainer>
       <div className="w-25 h-25 bg-grayscale-5 rounded-full"></div>
 
       <h1 className="text-4xl uppercase my-5">Winter Wishlist Association</h1>
@@ -151,13 +153,11 @@ export default function AuthPage({ mode }: AuthPageProps) {
         )}
       </form>
 
-      <button
-        onClick={(e) => handleAuth(e)}
+      <PrimaryButton
+        text={isSignin ? "Sign In" : "Create Account"}
         form="auth-form"
-        className="bg-green-medium w-full text-2xl text-cream-light py-3 rounded-xl cursor-pointer hover:bg-green-dark"
-      >
-        {isSignin ? "Sign In" : "Create Account"}
-      </button>
-    </div>
+        onClick={(e) => handleAuth(e)}
+      />
+    </AuthContainer>
   );
 }

@@ -3,6 +3,8 @@ import LabeledInput from "../components/LabeledInput.tsx";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../firebase/firebase.ts";
 import { Link } from "react-router";
+import AuthContainer from "../components/AuthContainer.tsx";
+import PrimaryButton from "../components/PrimaryButton.tsx";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState<string>("");
@@ -22,9 +24,9 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div>
-      <h1>Reset Password</h1>
-      <form>
+    <AuthContainer>
+      <h1 className="text-3xl">Reset Password</h1>
+      <form id="forgot-password-form">
         <LabeledInput
           labelText="Email"
           inputType="email"
@@ -33,18 +35,22 @@ export default function ForgotPasswordPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-
-        {sent && (
-          <p>
-            If an account exists for that email, a password reset link has been
-            sent
-          </p>
-        )}
-
-        <button onClick={handleClick}>Send Reset Email</button>
+        <p className={!sent ? "invisible" : ""}>
+          If an account exists for that email, a password reset link has been
+          sent
+        </p>
       </form>
-
-      <Link to="/signin">Back to Sign In</Link>
-    </div>
+      <PrimaryButton
+        text="Send Reset Email"
+        form="forgot-password-form"
+        onClick={handleClick}
+      />
+      <Link
+        to="/signin"
+        className="text-lg text-green-light hover:text-green-dark"
+      >
+        Back to Sign In
+      </Link>
+    </AuthContainer>
   );
 }
