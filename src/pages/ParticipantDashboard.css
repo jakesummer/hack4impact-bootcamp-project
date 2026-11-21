@@ -1,0 +1,7 @@
+@import url('https://googleapis.com');
+@import "tailwindcss";
+
+
+@theme {
+  --font-cinzel: "Cinzel", serif;
+}
