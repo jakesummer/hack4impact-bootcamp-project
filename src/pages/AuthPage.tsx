@@ -149,7 +149,7 @@ export default function AuthPage({ mode }: AuthPageProps) {
     <AuthContainer>
       <div className="w-25 h-25 bg-grayscale-5 rounded-full"></div>
 
-      <h1 className="text-4xl uppercase my-5">Winter Wishlist Association</h1>
+      <h1 className="text-[2.1rem]/[2.4rem] my-5 font-cinzel text-center">Winter Wishlist Association</h1>
 
       <div className="w-full flex justify-center lowercase">
         <SwitchModeButton

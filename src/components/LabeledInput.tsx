@@ -33,7 +33,7 @@ export default function LabeledInput({
         required={required}
         value={value}
         onChange={onChange}
-        className="bg-white border border-black rounded-md h-10 px-3"
+        className="bg-white border border-black rounded-md h-10 px-3 focus:outline-2 focus:outline-offset-1 focus:outline-green-light"
       />
     </label>
   );
