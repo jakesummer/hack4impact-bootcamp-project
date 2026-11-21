@@ -6,11 +6,13 @@ import {
 } from "firebase/auth";
 import { useState } from "react";
 import { auth, db } from "../firebase/firebase.ts";
-import type { UserData } from "../types.ts";
+import type { AccountType, UserData } from "../types.ts";
 import { doc, setDoc } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
 import AuthContainer from "../components/AuthContainer.tsx";
 import PrimaryButton from "../components/PrimaryButton.tsx";
+
+type SelectableAccountTypes = Exclude<AccountType, "admin">; // admin can't be selected when creating account
 
 interface AuthPageProps {
   mode: "signin" | "signup";
@@ -21,6 +23,11 @@ interface SwitchModeButtonProps {
   text: string;
   side: "left" | "right";
   selected: boolean;
+}
+
+interface AccountTypeSelectionProps {
+  value: SelectableAccountTypes;
+  setAccountType: React.Dispatch<React.SetStateAction<SelectableAccountTypes>>;
 }
 
 function getErrorMessage(error: string) {
@@ -59,10 +66,53 @@ function SwitchModeButton({ to, text, side, selected }: SwitchModeButtonProps) {
   );
 }
 
+const ACCOUNT_TYPE_OPTIONS: { value: SelectableAccountTypes; label: string }[] =
+  [
+    { value: "participant", label: "Participant" },
+    { value: "volunteer", label: "Volunteer" },
+  ];
+
+function AccountTypeSelection({
+  value,
+  setAccountType,
+}: AccountTypeSelectionProps) {
+  return (
+    <fieldset className="w-full flex flex-col">
+      <legend className="mb-1.5">Account Type</legend>
+      <div className="w-full flex gap-2">
+        {ACCOUNT_TYPE_OPTIONS.map((option) => (
+          <label
+            key={option.value}
+            className="w-full h-full flex justify-center"
+          >
+            <input
+              type="radio"
+              name="accountType"
+              value={option.value}
+              checked={value === option.value}
+              onChange={() => setAccountType(option.value)}
+              className="peer sr-only"
+            />
+            <span
+              className="w-full h-full peer-not-checked:cursor-pointer flex justify-center bg-white 
+              peer-checked:bg-green-medium py-3 rounded-lg text-black peer-checked:text-white text-lg border 
+              border-black peer-checked:border-green-medium"
+            >
+              {option.label}
+            </span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
 export default function AuthPage({ mode }: AuthPageProps) {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [accountType, setAccountType] =
+    useState<SelectableAccountTypes>("participant");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const navigate = useNavigate();
 
@@ -83,7 +133,7 @@ export default function AuthPage({ mode }: AuthPageProps) {
           email,
           password,
         );
-        const defaultData: UserData = { name, accountType: "participant" }; // TODO: change account type based on login
+        const defaultData: UserData = { name, accountType: accountType };
         await setDoc(doc(db, "users", userCred.user.uid), defaultData);
       }
       navigate("/");
@@ -115,6 +165,13 @@ export default function AuthPage({ mode }: AuthPageProps) {
           selected={!isSignin}
         />
       </div>
+
+      {!isSignin && (
+        <AccountTypeSelection
+          value={accountType}
+          setAccountType={setAccountType}
+        />
+      )}
 
       <form className="w-full flex flex-col" id="auth-form">
         <div className="flex flex-col gap-5">
