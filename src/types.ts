@@ -12,3 +12,14 @@ export interface AuthContextType {
   userData: UserData | null;
   loading: boolean;
 }
+
+export interface Wish {
+  itemName: string | undefined;
+  matched: boolean | undefined;
+  matchedDonationId: string | undefined;
+}
+
+export interface Wishlist {
+  items: Wish[];
+  participantId: string;
+}
