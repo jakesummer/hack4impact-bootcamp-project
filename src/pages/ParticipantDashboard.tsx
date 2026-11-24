@@ -56,7 +56,7 @@ export default function ParticipantDashboard() {
 
     // updating wishes
     const addWish = async () => {
-      if (!wishlistId) return;
+      if (!wishlistId || !wishName.trim()) return;
 
       const user = doc(db, "wishlists", wishlistId);
       const newWish: Wish = {
@@ -70,7 +70,7 @@ export default function ParticipantDashboard() {
         participantId: uid
       });
       setFlip(!flip);
-      setWishName("");
+      closeModal();
     }
 
     const deleteWish = async (index: number) => {
@@ -86,7 +86,7 @@ export default function ParticipantDashboard() {
     }
 
     const editWish = async (index: number, newName: string) => {
-      if (!wishes || !wishlistId) return;
+      if (!wishes || !wishlistId || !wishName.trim()) return;
 
       const user = doc(db, "wishlists", wishlistId);
       const updatedWishlist: Wish[] = wishes.map((wish, i) => i === index ? {...wish, itemName: newName}: wish);
@@ -95,7 +95,7 @@ export default function ParticipantDashboard() {
         participantId: uid
       });
       setFlip(!flip);
-      setWishName("");
+      closeModalEdit();
     }
 
     // renders the wishes
@@ -147,7 +147,6 @@ export default function ParticipantDashboard() {
               <button 
               className="bg-green-medium px-5 py-2.5 rounded-sm text-white text-sm"
               type="button" onClick={() => {
-                closeModal();
                 addWish();
               }}>Add to Wishlist</button>
             </div>
@@ -173,7 +172,6 @@ export default function ParticipantDashboard() {
               className="bg-green-medium px-5 py-2.5 rounded-sm text-white text-sm"
               type="button" onClick={() => {
                 if (editingWishIndex === null) return;
-                closeModalEdit();
                 editWish(editingWishIndex, wishName);
               }}>Edit Wish</button>
             </div>
