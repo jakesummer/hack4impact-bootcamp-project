@@ -6,8 +6,8 @@ import {
 } from "firebase/auth";
 import { useState } from "react";
 import { auth, db } from "../firebase/firebase.ts";
-import type { AccountType, UserData } from "../types.ts";
-import { doc, setDoc } from "firebase/firestore";
+import type { AccountType } from "../types.ts";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
 import AuthContainer from "../components/AuthContainer.tsx";
 import PrimaryButton from "../components/PrimaryButton.tsx";
@@ -133,8 +133,14 @@ export default function AuthPage({ mode }: AuthPageProps) {
           email,
           password,
         );
-        const defaultData: UserData = { name, accountType: accountType };
-        await setDoc(doc(db, "users", userCred.user.uid), defaultData);
+        const uid = userCred.user.uid;
+
+        await setDoc(doc(db, "users", uid), { name, accountType: accountType });
+        if (accountType === "participant")
+          await addDoc(collection(db, "wishlists"), {
+            items: [],
+            participantId: uid,
+          });
       }
       navigate("/");
     } catch (e) {
@@ -149,7 +155,9 @@ export default function AuthPage({ mode }: AuthPageProps) {
     <AuthContainer>
       <div className="w-25 h-25 bg-grayscale-5 rounded-full"></div>
 
-      <h1 className="text-[2.1rem]/[2.4rem] my-5 font-cinzel text-center">Winter Wishlist Association</h1>
+      <h1 className="text-[2.1rem]/[2.4rem] my-5 font-cinzel text-center">
+        Winter Wishlist Association
+      </h1>
 
       <div className="w-full flex justify-center lowercase">
         <SwitchModeButton
