@@ -11,7 +11,7 @@ export default function ParticipantDashboard() {
     const [wishes, setWishes] = useState<Wish[]>();
     // const [username, setUsername] = useState<string>();
     const [wishlistId, setWishlistId] = useState<string>();
-    const [editingWish, setEditingWish] = useState<Wish | null>();
+    const [editingWishIndex, setEditingWishIndex] = useState<number | null>(null);
     const {currentUser, userData} = useAuth();
     const uid = userData?.uid;
     
@@ -73,12 +73,11 @@ export default function ParticipantDashboard() {
       setWishName("");
     }
 
-    const deleteWish = async (name: string, matched: boolean, matchedDonationId: string) => {
+    const deleteWish = async (index: number) => {
       if (!wishes || !wishlistId) return;
 
       const user = doc(db, "wishlists", wishlistId);
-      const updatedWishlist = wishes.filter((wish) => (wish.itemName !== name ||
-      wish.matched !== matched || wish.matchedDonationId !== matchedDonationId));
+      const updatedWishlist = wishes.filter((_, i) => (i !== index));
       await updateDoc(user, {
         items: updatedWishlist,
         participantId: uid
@@ -86,19 +85,11 @@ export default function ParticipantDashboard() {
       setFlip(!flip);
     }
 
-    const editWish = async (name: string, newName: string | undefined, matched: boolean | undefined,
-      matchedDonationId: string) => {
+    const editWish = async (index: number, newName: string) => {
       if (!wishes || !wishlistId) return;
 
       const user = doc(db, "wishlists", wishlistId);
-      const newWish: Wish = {
-        itemName: newName,
-        matched: matched,      // RIGHT NOW IF YOU EDIT A WISH, IT IS RESET BACK TO NOT MATCHED
-        matchedDonationId: matchedDonationId
-      };
-      const updatedWishlist = wishes.map((wish) => 
-        wish.itemName === name && wish.matched === matched && wish.matchedDonationId === matchedDonationId
-      ? newWish : wish);
+      const updatedWishlist: Wish[] = wishes.map((wish, i) => i === index ? {...wish, itemName: newName}: wish);
       await updateDoc(user, {
         items: updatedWishlist,
         participantId: uid
@@ -116,6 +107,7 @@ export default function ParticipantDashboard() {
             where("participantId", "==", uid));
             const querySnapshot = await getDocs(q);
             const wishlist = querySnapshot.docs[0];
+            if (!wishlist) return;
             const data = wishlist.data().items;
             setWishes(data);
             setWishlistId(wishlist.id);
@@ -180,9 +172,9 @@ export default function ParticipantDashboard() {
               <button 
               className="bg-green-medium px-5 py-2.5 rounded-sm text-white text-sm"
               type="button" onClick={() => {
-                if (!editingWish) return;
+                if (editingWishIndex === null) return;
                 closeModalEdit();
-                editWish(editingWish.itemName ?? "", wishName, editingWish.matched ?? false, editingWish.matchedDonationId ?? "");
+                editWish(editingWishIndex, wishName);
               }}>Edit Wish</button>
             </div>
           </dialog>
@@ -194,12 +186,12 @@ export default function ParticipantDashboard() {
                   ${wish.matched ? "text-green-medium bg-green-light border-green-medium" : "text-red-medium bg-red-light border-red-medium"}`}>
                   {wish.matched ? "Matched" : "Unmatched"}</p>
                 <button className="flex justify-end px-4" type="button" onClick={() => {
-                  setEditingWish(wish);
+                  setEditingWishIndex(index);
                   setWishName(wish.itemName ?? "");
                   openModalEdit();
                 }}>Edit</button>
                 <button className="flex justify-end" type="button" onClick={() => {
-                  deleteWish(wish.itemName ?? "", wish.matched ?? false, wish.matchedDonationId ?? "")
+                  deleteWish(index);
                 }}>X</button>
               </div>
             ))}
