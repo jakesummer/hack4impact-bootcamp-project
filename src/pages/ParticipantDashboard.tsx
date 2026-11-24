@@ -1,5 +1,5 @@
 import {db} from "../firebase/firebase";
-import { doc, getDoc, getDocs, updateDoc, query, where, collection } from "firebase/firestore";
+import { doc, getDocs, updateDoc, query, where, collection } from "firebase/firestore";
 import { useState, useEffect, useRef } from "react";
 import useAuth from "../hooks/useAuth.tsx"
 import "../App.css";
@@ -9,10 +9,10 @@ import LabeledInput from "../components/LabeledInput.tsx";
 export default function ParticipantDashboard() {
     // used to store the current array of wishes
     const [wishes, setWishes] = useState<Wish[]>();
-    const [username, setUsername] = useState<string>();
+    // const [username, setUsername] = useState<string>();
     const [wishlistId, setWishlistId] = useState<string>();
-    const {currentUser} = useAuth();
-    const uid = currentUser?.uid;
+    const {currentUser, userData} = useAuth();
+    const uid = userData?.uid;
     
 
     // used for popups
@@ -54,6 +54,8 @@ export default function ParticipantDashboard() {
 
     // updating wishes
     const addWish = async () => {
+      if (!wishlistId) return;
+
       const user = doc(db, "wishlists", wishlistId);
       const newWish: Wish = {
         itemName: wishName,
@@ -70,7 +72,8 @@ export default function ParticipantDashboard() {
     }
 
     const deleteWish = async (name: string, matched: boolean, matchedDonationId: string) => {
-      if (!wishes) return;
+      if (!wishes || !wishlistId) return;
+
       const user = doc(db, "wishlists", wishlistId);
       const updatedWishlist = wishes.filter((wish) => (wish.itemName !== name ||
       wish.matched !== matched || wish.matchedDonationId !== matchedDonationId));
@@ -83,7 +86,8 @@ export default function ParticipantDashboard() {
 
     const editWish = async (name: string, newName: string | undefined, matched: boolean | undefined,
       matchedDonationId: string) => {
-      if (!wishes) return;
+      if (!wishes || !wishlistId) return;
+
       const user = doc(db, "wishlists", wishlistId);
       const newWish: Wish = {
         itemName: newName,
@@ -104,16 +108,14 @@ export default function ParticipantDashboard() {
     // renders the wishes
     useEffect(() => {
         async function getData() {
+            if (!uid) return;
+
             const q = query(collection(db, "wishlists"), 
             where("participantId", "==", uid));
             const querySnapshot = await getDocs(q);
             const wishlist = querySnapshot.docs[0];
             const data = wishlist.data().items;
-            const wishes = doc(db, "users", uid);
-            const user = await getDoc(wishes);
-            const userData = user.data();
             setWishes(data);
-            setUsername(userData.name);
             setWishlistId(wishlist.id);
         }  
 
@@ -128,7 +130,7 @@ export default function ParticipantDashboard() {
         </div>
         <div className="bg-cream-light min-h-screen">
           <div className="px-20 py-5 flex flex-wrap justify-between">
-            <h1 className="participantTitle text-2xl text-green-medium">{username}'s Wishlist</h1>
+            <h1 className="participantTitle text-2xl text-green-medium">{userData?.name}'s Wishlist</h1>
             <button className="bg-green-light px-5 py-2.5 rounded-sm text-white text-sm" type="button" onClick={openModal}>+ Add to Wishlist</button>
           </div>
           <dialog ref={dialogRef} className="m-auto p-8 rounded-md bg-white shadow-xl">
