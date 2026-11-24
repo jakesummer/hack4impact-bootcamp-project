@@ -3,6 +3,7 @@ import type { User } from "firebase/auth";
 export type AccountType = "participant" | "admin" | "volunteer";
 
 export interface UserData {
+  uid: string;
   name: string;
   accountType: AccountType;
 }

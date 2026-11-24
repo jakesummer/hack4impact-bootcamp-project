@@ -21,7 +21,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       if (user) {
         try {
           const snapshot = await getDoc(doc(db, "users", user.uid));
-          setUserData(snapshot.data() as UserData);
+          setUserData({ ...(snapshot.data() as UserData), uid: user.uid });
         } catch (e) {
           console.error(e);
         }
