@@ -11,6 +11,7 @@ export default function ParticipantDashboard() {
     const [wishes, setWishes] = useState<Wish[]>();
     // const [username, setUsername] = useState<string>();
     const [wishlistId, setWishlistId] = useState<string>();
+    const [editingWish, setEditingWish] = useState<Wish | null>();
     const {currentUser, userData} = useAuth();
     const uid = userData?.uid;
     
@@ -35,6 +36,7 @@ export default function ParticipantDashboard() {
     (like calling editWish instead of addWish) which requires another popup.
     */
     const openModal = () => {
+      setWishName("");
       dialogRef.current?.showModal();
     };
 
@@ -158,6 +160,32 @@ export default function ParticipantDashboard() {
               }}>Add to Wishlist</button>
             </div>
           </dialog>
+          <dialog ref={dialogRefEdit} className="m-auto p-8 rounded-md bg-white shadow-xl">
+            <div className="flex flex-col gap-6">
+              <div>
+                <button className="flex w-full justify-end" type="button" onClick={closeModalEdit}>X</button>
+                <p className="text-center text-xl">Edit wish</p>
+              </div>
+              <div>
+                <LabeledInput 
+                labelText = "Item Name" 
+                inputName = "wishName"
+                required = {true}
+                value={wishName}
+                onChange={(e) => {
+                    setWishName(e.target.value);
+                  }}>
+                </LabeledInput>
+              </div>
+              <button 
+              className="bg-green-medium px-5 py-2.5 rounded-sm text-white text-sm"
+              type="button" onClick={() => {
+                if (!editingWish) return;
+                closeModalEdit();
+                editWish(editingWish.itemName ?? "", wishName, editingWish.matched ?? false, editingWish.matchedDonationId ?? "");
+              }}>Edit Wish</button>
+            </div>
+          </dialog>
           <div className="flex flex-col gap-6 p-8">
             {wishes?.map((wish, index) => (
               <div key={index} className="outline outline-black rounded-sm p-6 shadow-lg flex">
@@ -166,34 +194,10 @@ export default function ParticipantDashboard() {
                   ${wish.matched ? "text-green-medium bg-green-light border-green-medium" : "text-red-medium bg-red-light border-red-medium"}`}>
                   {wish.matched ? "Matched" : "Unmatched"}</p>
                 <button className="flex justify-end px-4" type="button" onClick={() => {
-                  openModalEdit();
+                  setEditingWish(wish);
                   setWishName(wish.itemName ?? "");
+                  openModalEdit();
                 }}>Edit</button>
-                <dialog ref={dialogRefEdit} className="m-auto p-8 rounded-md bg-white shadow-xl">
-                  <div className="flex flex-col gap-6">
-                    <div>
-                      <button className="flex w-full justify-end" type="button" onClick={closeModalEdit}>X</button>
-                      <p className="text-center text-xl">Edit wish</p>
-                    </div>
-                    <div>
-                      <LabeledInput 
-                      labelText = "Item Name" 
-                      inputName = "wishName"
-                      required = {true}
-                      value={wishName}
-                      onChange={(e) => {
-                          setWishName(e.target.value);
-                        }}>
-                      </LabeledInput>
-                    </div>
-                    <button 
-                    className="bg-green-medium px-5 py-2.5 rounded-sm text-white text-sm"
-                    type="button" onClick={() => {
-                      closeModalEdit();
-                      editWish(wish.itemName ?? "", wishName, wish.matched ?? false, wish.matchedDonationId ?? "");
-                    }}>Edit Wish</button>
-                  </div>
-                </dialog>
                 <button className="flex justify-end" type="button" onClick={() => {
                   deleteWish(wish.itemName ?? "", wish.matched ?? false, wish.matchedDonationId ?? "")
                 }}>X</button>
