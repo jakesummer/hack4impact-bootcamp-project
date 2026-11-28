@@ -23,3 +23,7 @@ export interface Wishlist {
   items: Wish[];
   participantId: string;
 }
+
+export interface WishlistWithName extends Wishlist {
+  associatedName: string;
+}

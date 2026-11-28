@@ -5,6 +5,7 @@ import useAuth from "../hooks/useAuth.tsx"
 import "../App.css";
 import type {Wish} from "../types.ts";
 import LabeledInput from "../components/LabeledInput.tsx";
+import { useLocation } from 'react-router';
 
 export default function ParticipantDashboard() {
     // used to store the current array of wishes
@@ -12,7 +13,8 @@ export default function ParticipantDashboard() {
     const [username, setUsername] = useState<string>();
     const [wishlistId, setWishlistId] = useState<string>();
     const {currentUser} = useAuth();
-    const uid = currentUser?.uid;
+    const { state } = useLocation();
+    const uid = state || currentUser?.uid;
     
 
     // used for popups
@@ -161,7 +163,7 @@ export default function ParticipantDashboard() {
               <div key={index} className="outline outline-black rounded-sm p-6 shadow-lg flex">
                 <p className="px-5">{wish.itemName}</p>
                 <p className={`flex ml-auto px-2 py-1 rounded-3xl text-sm border-2 border-solid 
-                  ${wish.matched ? "text-green-medium bg-green-light border-green-medium" : "text-red-medium bg-red-light border-red-medium"}`}>
+                  ${wish.matched ? "text-green-medium bg-green-verylight border-green-medium" : "text-red-medium bg-red-light border-red-medium"}`}>
                   {wish.matched ? "Matched" : "Unmatched"}</p>
                 <button className="flex justify-end px-4" type="button" onClick={() => {
                   openModalEdit();

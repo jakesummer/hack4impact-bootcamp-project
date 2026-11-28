@@ -5,6 +5,7 @@
   --color-green-dark: #2c3930;
   --color-green-medium: #3f4e45;
   --color-green-light: #586e61;
+  --color-green-verylight: #DBE9DD;
 
   --color-brown-dark: #816048;
   --color-brown-medium: #a27a5d;
@@ -19,6 +20,9 @@
 
   --color-blue-medium: #808abd;
   --color-blue-light: #e2e5f5;
+
+  --color-yellow-medium: #B47F26;
+  --color-yellow-light: #FCF0CF;  
 
   --color-grayscale-0: #1e1c1b;
   --color-grayscale-1: #3e3a36;
